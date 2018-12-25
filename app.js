@@ -80,7 +80,7 @@ class Store {
 
         books.forEach((book, index) => {
             if (book.isbn === isbn) {
-                bookc.splice(index, 1);
+                books.splice(index, 1);
             }
         });
 
@@ -124,4 +124,10 @@ document.querySelector('#book-form').addEventListener('submit', e => {
 })
 
 // Event: remove a book
-document.querySelector('#book-list').addEventListener('click', e => UI.deleteBook(e.target))
+document.querySelector('#book-list').addEventListener('click', e => {
+    // Remove book from UI
+    UI.deleteBook(e.target);
+
+    // Remove book from local storage
+    Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
+});
