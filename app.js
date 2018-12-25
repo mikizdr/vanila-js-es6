@@ -45,6 +45,7 @@ class UI {
     static deleteBook(element) {
         if (element.classList.contains('delete')) {
             element.parentElement.parentElement.remove();
+            UI.showAlert('Book Removed', 'warning');
         }
     }
 
@@ -91,6 +92,9 @@ document.querySelector('#book-form').addEventListener('submit', e => {
 
         // Add book to UI
         UI.addBookToList(book);
+
+        // Show success message
+        UI.showAlert('Book Added', 'success');
 
         // Clear fields
         UI.clearFields();
