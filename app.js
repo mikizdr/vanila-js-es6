@@ -10,19 +10,7 @@ class Book {
 // UI class: handles UI tasks
 class UI {
     static displayBooks() {
-        const StoredBooks = [
-            {
-                title: 'Book One',
-                author: 'John Doe',
-                isbn: 1362890
-            },
-            {
-                title: 'Book Two',
-                author: 'Jane Doe',
-                isbn: 3462362
-            }
-        ]
-        const books = StoredBooks;
+        const books = Store.getBooks();
 
         books.forEach(book => UI.addBookToList(book));
     }
@@ -69,6 +57,36 @@ class UI {
 }
 
 // Store class: handles storage
+class Store {
+    static getBooks() {
+        let books;
+        // Checks if there are books already stored in local storage (browser)
+        if (localStorage.getItem('books') === null) {
+            books = [];
+        } else {
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+        return books;
+    }
+
+    static addBook(book) {
+        const books = Store.getBooks();
+        books.push(book);
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+
+    static removeBook(isbn) {
+        const books = Store.getBooks();
+
+        books.forEach((book, index) => {
+            if (book.isbn === isbn) {
+                bookc.splice(index, 1);
+            }
+        });
+
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+}
 
 // Event: display a book
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
@@ -92,6 +110,9 @@ document.querySelector('#book-form').addEventListener('submit', e => {
 
         // Add book to UI
         UI.addBookToList(book);
+
+        // Add book to local storage
+        Store.addBook(book);
 
         // Show success message
         UI.showAlert('Book Added', 'success');
