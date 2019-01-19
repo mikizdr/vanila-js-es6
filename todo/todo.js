@@ -41,8 +41,18 @@ class UI {
         list.appendChild(row);
     }
 
-    static showAlert(message) {
-        alert(message);
+    static showAlert(message, alert) {
+        const div = document.createElement('div');
+        div.className = `alert alert-${alert}`;
+        div.appendChild(document.createTextNode(message));
+        const container = document.querySelector('.container');
+        const form = document.querySelector('#todo-form');
+        container.insertBefore(div, form);
+
+        // Vanish after 3 secs
+        setTimeout(() => {
+            document.querySelector('.alert').remove();
+        }, 3000);
     }
 
     static clearFields() {
@@ -61,6 +71,7 @@ class CRUD {
         const todos = [
         ];
         todos.push(todo);
+        UI.showAlert('Todo created successfully.', 'warning');
         UI.displayToDos(todos);
     }
 
@@ -83,7 +94,7 @@ document.querySelector('#todo-form').addEventListener('submit', e => {
     const title = document.querySelector('#title').value;
     // Form validation
     if (title === '') {
-        UI.showAlert('warning');
+        UI.showAlert('Please fill in title field.', 'danger');
     } else {
         // Create new Todo object
         const todo = new Todo(title);
