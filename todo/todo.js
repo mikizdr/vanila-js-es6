@@ -86,21 +86,20 @@ class CRUD {
 
     // Display all todos
     static indexTodo() {
-        const todos = [
-            {
-                id: 1,
-                title: "dfgdfg",
-                done: true,
-                date: "19-01-2019 17:26"
-            }
-        ];
+        let todos;
+        // Check if there are books already soterd in local storage (browser)
+        if (localStorage.getItem('todos') === null) {
+            todos = [];
+        } else {
+            todos = JSON.parse(localStorage.getItem('todos'));
+        }
         return todos;
     }
 
     static storeTodo(todo) {
         const todos = this.indexTodo();
         todos.unshift(todo);
-        console.log(todos)
+        localStorage.setItem('todos', JSON.stringify(todos));
         // Clear fields in the form
         UI.clearFields();
         // Show alert
