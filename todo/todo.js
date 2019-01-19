@@ -1,9 +1,13 @@
 class Todo {
-    constructor(title) {
-        this.id = this.getId();
+    constructor(title, done, id = null) {
+        if (id) {
+            this.id = id;
+        } else {
+            this.id = this.getId();
+        }
         this.title = title;
         this.date = this.getDateTime();
-        this.done = false;
+        this.done = done || false;
     }
 
     getDateTime() {
@@ -48,12 +52,14 @@ class UI {
             className = 'lineThrough';
         }
         row.innerHTML = `
+            <td>${todo.id}</td>
             <td class="${className}">${todo.title}</td>
             <td class="${className}">${todo.date}</td>
-            <td><a href="#"><i class="fas fa-check text-success done"></i></a></td>
+            <td><a href="#" todo-id="${todo.id}"><i class="fas fa-check text-success done"></i></a></td>
         `;
 
-        list.appendChild(row);
+        list.insertBefore(row, list.firstChild)
+        // list.appendChild(row);
     }
 
     static showAlert(message, alert) {
@@ -93,17 +99,18 @@ class CRUD {
         } else {
             todos = JSON.parse(localStorage.getItem('todos'));
         }
+        // todos.reverse();
         return todos;
     }
 
     static storeTodo(todo) {
         const todos = this.indexTodo();
-        todos.unshift(todo);
+        todos.push(todo);
         localStorage.setItem('todos', JSON.stringify(todos));
-        // Clear fields in the form
-        UI.clearFields();
-        // Show alert
-        UI.showAlert('Todo created successfully.', 'success');
+
+    }
+
+    static showTodo() {
 
     }
 
@@ -118,12 +125,30 @@ class CRUD {
     }
 
     // Mark todo as done with linr-through style
-    static markAsDone(element) {
-        let siblings = n => [...n.parentElement.children].filter(c => c != n);
-        let brothers_n_sisters = siblings(element);
-        brothers_n_sisters.forEach(el => {
-            el.style.textDecoration = "line-through"
-        });
+    static markAsDone(id) {
+        // Solution with the localStorage
+        const todos = CRUD.indexTodo();
+        const existingTodoIndex = id => todos.findIndex(todo => todo.id == id);
+        const existingTodos = [...todos];
+        const existingTodo = todos[existingTodoIndex(id)];
+        // Toggle between done and not done
+        existingTodo.done = !existingTodo.done;
+        const updatedTodo = new Todo(existingTodo.title, existingTodo.done, existingTodo.id)
+        existingTodos[existingTodoIndex(id)] = updatedTodo;
+
+        localStorage.setItem('todos', JSON.stringify(existingTodos));
+        location.reload();
+
+        // console.log([...todos][existingTodoIndex])
+        // console.log(existingTodo.done)
+
+        // First solution with an array as variable
+        // let siblings = n => [...n.parentElement.children].filter(c => c != n);
+        // let brothers_n_sisters = siblings(element);
+        // console.log(brothers_n_sisters);
+        // brothers_n_sisters.forEach(el => {
+        //     el.style.textDecoration = "line-through"
+        // });
     }
 }
 
@@ -144,18 +169,28 @@ document.querySelector('#todo-form').addEventListener('submit', e => {
     if (title === '') {
         UI.showAlert('Please fill in title field.', 'danger');
     } else {
-        // Create new Todo object
+        // Instantate Todo class
         const todo = new Todo(title);
-        CRUD.storeTodo(todo);
+
         // Display todo in the list
-        UI.displayToDos();
+        UI.addToDoToList(todo);
+
+        // Add todo to the localStorage
+        CRUD.storeTodo(todo);
+
+        // Clear fields in the form
+        UI.clearFields();
+
+        // Show success alert
+        UI.showAlert('Todo created successfully.', 'success');
     }
 })
 
 document.querySelector('#todo-list').addEventListener('click', event => {
     // console.log(event.target)
     if (event.target.classList.contains('done')) {
-        const element = event.target.parentElement.parentElement;
-        CRUD.markAsDone(element);
+        // const element = event.target.parentElement.parentElement;
+        const id = event.target.parentElement.getAttribute('todo-id');
+        CRUD.markAsDone(id);
     }
 })
