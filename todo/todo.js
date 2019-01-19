@@ -2,32 +2,29 @@ class Todo {
     constructor(title) {
         this.title = title;
         this.date = this.getDateTime();
+        this.tag = false;
     }
 
     getDateTime() {
         let d = new Date();
-        const year = d.getFullYear();
-        const month = d.getMonth() + 1;
-        const day = d.getDate();
-        const hour = d.getHours();
-        const minutes = d.getMinutes();
+        let year = d.getFullYear();
+        let month = d.getMonth() + 1;
+        if (month < 10) {
+            month = '0' + month;
+        }
+        let day = d.getDate();
+        if (day < 10) {
+            day = '0' + day;
+        }
+        let hour = d.getHours();
+        let minutes = d.getMinutes();
         return `${day}-${month}-${year} ${hour}:${minutes}`
     }
 }
 
 class UI {
     // Display todos in the table
-    static displayToDo() {
-        const todos = [
-            {
-                title: 'Beat',
-                date: '19-01-2019 10:36'
-            },
-            {
-                title: 'Beat',
-                date: '19-01-2019 10:36'
-            }
-        ];
+    static displayToDos(todos) {
         todos.forEach(todo => UI.addToDoToList(todo));
     }
 
@@ -43,12 +40,58 @@ class UI {
 
         list.appendChild(row);
     }
+
+    static showAlert(message) {
+        alert(message);
+    }
+
+    static clearFields() {
+        document.querySelector('#title').value = '';
+    }
 }
-UI.displayToDo()
+
+class CRUD {
+
+    // Display all todos
+    static indexTodo() {
+
+    }
+
+    static storeTodo(todo) {
+        const todos = [
+        ];
+        todos.push(todo);
+        UI.displayToDos(todos);
+    }
+
+    // Update todo
+    static updateTodo() {
+
+    }
+
+    // Delte todo
+    static deleteTodo() {
+
+    }
+}
+
 document.querySelector('#todo-form').addEventListener('submit', e => {
     // Prevent actual submit
     e.preventDefault();
+
+    // Get title value from the form
     const title = document.querySelector('#title').value;
-    const todo = new Todo(title);
-    console.log(todo)
+    // Form validation
+    if (title === '') {
+        UI.showAlert('warning');
+    } else {
+        // Create new Todo object
+        const todo = new Todo(title);
+        CRUD.storeTodo(todo);
+        // Clear fields in the form
+        UI.clearFields();
+
+        // console.log(todo);
+    }
+
 })
