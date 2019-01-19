@@ -48,10 +48,11 @@ class UI {
         const container = document.querySelector('.container');
         const form = document.querySelector('#todo-form');
         container.insertBefore(div, form);
-
+        document.querySelector('#formButton').disabled = true;
         // Vanish after 3 secs
         setTimeout(() => {
             document.querySelector('.alert').remove();
+            document.querySelector('#formButton').disabled = false;
         }, 3000);
     }
 
@@ -71,7 +72,11 @@ class CRUD {
         const todos = [
         ];
         todos.push(todo);
+        // Clear fields in the form
+        UI.clearFields();
+        // Show alert
         UI.showAlert('Todo created successfully.', 'warning');
+        // Display todo in the list
         UI.displayToDos(todos);
     }
 
@@ -99,10 +104,6 @@ document.querySelector('#todo-form').addEventListener('submit', e => {
         // Create new Todo object
         const todo = new Todo(title);
         CRUD.storeTodo(todo);
-        // Clear fields in the form
-        UI.clearFields();
-
-        // console.log(todo);
     }
 
 })
