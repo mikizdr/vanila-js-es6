@@ -1,5 +1,6 @@
 class Todo {
     constructor(title) {
+        this.id = this.getId();
         this.title = title;
         this.date = this.getDateTime();
         this.done = false;
@@ -20,21 +21,35 @@ class Todo {
         let minutes = d.getMinutes();
         return `${day}-${month}-${year} ${hour}:${minutes}`
     }
+
+    getId() {
+        const todos = CRUD.indexTodo();
+        if (todos.length == 0) {
+            return 1;
+        } else {
+            const ids = todos.map(id => id.id);
+            return Math.max(...ids) + 1;
+        }
+    }
 }
 
 class UI {
     // Display todos in the table
-    static displayToDos(todos) {
+    static displayToDos() {
+        const todos = CRUD.indexTodo();
         todos.forEach(todo => UI.addToDoToList(todo));
     }
 
     static addToDoToList(todo) {
         const list = document.querySelector('#todo-list');
         const row = document.createElement('tr');
-
+        let className = '';
+        if (todo.done === true) {
+            className = 'lineThrough';
+        }
         row.innerHTML = `
-            <td>${todo.title}</td>
-            <td>${todo.date}</td>
+            <td class="${className}">${todo.title}</td>
+            <td class="${className}">${todo.date}</td>
             <td><a href="#"><i class="fas fa-check text-success done"></i></a></td>
         `;
 
@@ -71,20 +86,26 @@ class CRUD {
 
     // Display all todos
     static indexTodo() {
-
+        const todos = [
+            {
+                id: 1,
+                title: "dfgdfg",
+                done: true,
+                date: "19-01-2019 17:26"
+            }
+        ];
+        return todos;
     }
 
     static storeTodo(todo) {
-        const todos = [
-        ];
+        const todos = this.indexTodo();
         todos.unshift(todo);
         console.log(todos)
         // Clear fields in the form
         UI.clearFields();
         // Show alert
-        UI.showAlert('Todo created successfully.', 'warning');
-        // Display todo in the list
-        UI.displayToDos(todos);
+        UI.showAlert('Todo created successfully.', 'success');
+
     }
 
     // Update todo
@@ -107,6 +128,13 @@ class CRUD {
     }
 }
 
+/* 
+* Handles events
+*/
+
+// Event: display a book
+document.addEventListener('DOMContentLoaded', UI.displayToDos);
+
 document.querySelector('#todo-form').addEventListener('submit', e => {
     // Prevent actual submit
     e.preventDefault();
@@ -120,6 +148,8 @@ document.querySelector('#todo-form').addEventListener('submit', e => {
         // Create new Todo object
         const todo = new Todo(title);
         CRUD.storeTodo(todo);
+        // Display todo in the list
+        UI.displayToDos();
     }
 })
 
