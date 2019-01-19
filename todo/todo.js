@@ -2,7 +2,7 @@ class Todo {
     constructor(title) {
         this.title = title;
         this.date = this.getDateTime();
-        this.tag = false;
+        this.done = false;
     }
 
     getDateTime() {
@@ -35,7 +35,7 @@ class UI {
         row.innerHTML = `
             <td>${todo.title}</td>
             <td>${todo.date}</td>
-            <td>actions</td>
+            <td><a href="#"><i class="fas fa-check text-success done"></i></a></td>
         `;
 
         list.appendChild(row);
@@ -59,6 +59,12 @@ class UI {
     static clearFields() {
         document.querySelector('#title').value = '';
     }
+
+    static tododone(elemet) {
+        if (element.classList.contains('done')) {
+            // console.log(element.parentElement)
+        }
+    }
 }
 
 class CRUD {
@@ -71,7 +77,8 @@ class CRUD {
     static storeTodo(todo) {
         const todos = [
         ];
-        todos.push(todo);
+        todos.unshift(todo);
+        console.log(todos)
         // Clear fields in the form
         UI.clearFields();
         // Show alert
@@ -89,6 +96,15 @@ class CRUD {
     static deleteTodo() {
 
     }
+
+    // Mark todo as done with linr-through style
+    static markAsDone(element) {
+        let siblings = n => [...n.parentElement.children].filter(c => c != n);
+        let brothers_n_sisters = siblings(element);
+        brothers_n_sisters.forEach(el => {
+            el.style.textDecoration = "line-through"
+        });
+    }
 }
 
 document.querySelector('#todo-form').addEventListener('submit', e => {
@@ -105,5 +121,12 @@ document.querySelector('#todo-form').addEventListener('submit', e => {
         const todo = new Todo(title);
         CRUD.storeTodo(todo);
     }
+})
 
+document.querySelector('#todo-list').addEventListener('click', event => {
+    // console.log(event.target)
+    if (event.target.classList.contains('done')) {
+        const element = event.target.parentElement.parentElement;
+        CRUD.markAsDone(element);
+    }
 })
