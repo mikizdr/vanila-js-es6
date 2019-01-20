@@ -27,7 +27,7 @@ class Todo {
     }
 
     getId() {
-        const todos = CRUD.indexTodo();
+        const todos = CRUD.getTodos();
         if (todos.length == 0) {
             return 1;
         } else {
@@ -40,7 +40,7 @@ class Todo {
 class UI {
     // Display todos in the table
     static displayToDos() {
-        const todos = CRUD.indexTodo();
+        const todos = CRUD.getTodos();
         todos.forEach(todo => UI.addToDoToList(todo));
     }
 
@@ -94,7 +94,7 @@ class UI {
 class CRUD {
 
     // Display all todos
-    static indexTodo() {
+    static getTodos() {
         let todos;
         // Check if there are books already soterd in local storage (browser)
         if (localStorage.getItem('todos') === null) {
@@ -107,7 +107,7 @@ class CRUD {
     }
 
     static storeTodo(todo) {
-        const todos = this.indexTodo();
+        const todos = this.getTodos();
         todos.push(todo);
         localStorage.setItem('todos', JSON.stringify(todos));
 
@@ -123,27 +123,35 @@ class CRUD {
     }
 
     // Delte todo
-    static deleteTodo() {
+    static deleteTodo(id) {
+        // Find all todos
+        const todos = this.getTodos();
+        todos.forEach((todo, index) => {
+            if (todo.id == id) {
+                todos.splice(index, 1);
+            }
+        })
+        localStorage.setItem('todos', JSON.stringify(todos));
+        location.reload();
+        // const todoIndex = id => todos.findIndex(todo => todo.id == id);
+        // console.log(todoIndex(id));
 
     }
 
     // Mark todo as done with linr-through style
     static markAsDone(id) {
         // Solution with the localStorage
-        const todos = CRUD.indexTodo();
-        const existingTodoIndex = id => todos.findIndex(todo => todo.id == id);
-        const existingTodos = [...todos];
-        const existingTodo = todos[existingTodoIndex(id)];
+        // Find all todos
+        const todos = this.getTodos();
+        const todoIndex = id => todos.findIndex(todo => todo.id == id);
+        const existingTodo = todos[todoIndex(id)];
         // Toggle between done and not done
         existingTodo.done = !existingTodo.done;
         const updatedTodo = new Todo(existingTodo.title, existingTodo.done, existingTodo.id)
-        existingTodos[existingTodoIndex(id)] = updatedTodo;
+        existingTodos[todoIndex(id)] = updatedTodo;
 
         localStorage.setItem('todos', JSON.stringify(existingTodos));
         location.reload();
-
-        // console.log([...todos][existingTodoIndex])
-        // console.log(existingTodo.done)
 
         // First solution with an array as variable
         // let siblings = n => [...n.parentElement.children].filter(c => c != n);
@@ -190,17 +198,13 @@ document.querySelector('#todo-form').addEventListener('submit', e => {
 })
 
 document.querySelector('#todo-list').addEventListener('click', event => {
-    // console.log(event.target)
     if (event.target.classList.contains('done')) {
-        // const element = event.target.parentElement.parentElement;
-        // const id = event.target.parentElement.getAttribute('todo-id');
         CRUD.markAsDone(getId());
     }
 
     if (event.target.classList.contains('delete')) {
-        // const id = event.target.parentElement.getAttribute('todo-id');
-        console.log(getId())
+        CRUD.deleteTodo(getId());
     }
 })
 
-const getId = (attr) => event.target.parentElement.getAttribute('todo-id');
+const getId = () => event.target.parentElement.getAttribute('todo-id');
