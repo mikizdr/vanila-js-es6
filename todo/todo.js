@@ -55,14 +55,14 @@ class UI {
             <td>${todo.id}</td>
             <td class="${className}">${todo.title}</td>
             <td class="${className}">${todo.date}</td>
-            <td>
-                <a href="#" todo-id="${todo.id}"><i class="fas fa-check text-success done"></i></a>
-                <a href="#" todo-id="${todo.id}"><i class="fas fa-trash-alt text-danger delete"></i></a>
+            <td class="float-right">
+                <a href="#" todo-id="${todo.id}"><i class="fas fa-check text-success done mr-2"></i></a>
+                <a href="#" todo-id="${todo.id}"><i class="fas fa-trash-alt text-danger delete mr-2"></i></a>
+                <a href="#" todo-id="${todo.id}"><i class="fas fa-edit text-primary edit"></i></a>
             </td>
         `;
 
         list.insertBefore(row, list.firstChild)
-        // list.appendChild(row);
     }
 
     static showAlert(message, alert) {
@@ -84,11 +84,6 @@ class UI {
         document.querySelector('#title').value = '';
     }
 
-    static tododone(elemet) {
-        if (element.classList.contains('done')) {
-            // console.log(element.parentElement)
-        }
-    }
 }
 
 class CRUD {
@@ -148,9 +143,9 @@ class CRUD {
         // Toggle between done and not done
         existingTodo.done = !existingTodo.done;
         const updatedTodo = new Todo(existingTodo.title, existingTodo.done, existingTodo.id)
-        existingTodos[todoIndex(id)] = updatedTodo;
+        todos[todoIndex(id)] = updatedTodo;
 
-        localStorage.setItem('todos', JSON.stringify(existingTodos));
+        localStorage.setItem('todos', JSON.stringify(todos));
         location.reload();
 
         // First solution with an array as variable
