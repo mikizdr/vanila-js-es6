@@ -55,7 +55,10 @@ class UI {
             <td>${todo.id}</td>
             <td class="${className}">${todo.title}</td>
             <td class="${className}">${todo.date}</td>
-            <td><a href="#" todo-id="${todo.id}"><i class="fas fa-check text-success done"></i></a></td>
+            <td>
+                <a href="#" todo-id="${todo.id}"><i class="fas fa-check text-success done"></i></a>
+                <a href="#" todo-id="${todo.id}"><i class="fas fa-trash-alt text-danger delete"></i></a>
+            </td>
         `;
 
         list.insertBefore(row, list.firstChild)
@@ -153,7 +156,7 @@ class CRUD {
 }
 
 /* 
-* Handles events
+* Events handling
 */
 
 // Event: display a book
@@ -190,7 +193,14 @@ document.querySelector('#todo-list').addEventListener('click', event => {
     // console.log(event.target)
     if (event.target.classList.contains('done')) {
         // const element = event.target.parentElement.parentElement;
-        const id = event.target.parentElement.getAttribute('todo-id');
-        CRUD.markAsDone(id);
+        // const id = event.target.parentElement.getAttribute('todo-id');
+        CRUD.markAsDone(getId());
+    }
+
+    if (event.target.classList.contains('delete')) {
+        // const id = event.target.parentElement.getAttribute('todo-id');
+        console.log(getId())
     }
 })
+
+const getId = (attr) => event.target.parentElement.getAttribute('todo-id');
